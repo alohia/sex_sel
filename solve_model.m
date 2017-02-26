@@ -65,7 +65,7 @@ while(1)
         xend = xend-1;
     end
     i = i+1;
-    if (i>2 & (vxx(:,i-1) == vxx(:,i-2) | i > 25))
+    if (i>2 & (vxx(:,i-1) == vxx(:,i-2) | i > 35))
         break
     end
 end
