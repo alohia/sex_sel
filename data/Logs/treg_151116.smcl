@@ -1,0 +1,562 @@
+{smcl}
+{com}{sf}{ul off}{txt}{.-}
+      name:  {res}<unnamed>
+       {txt}log:  {res}/home/lohia/projects/sex_sel/data/Logs/treg_151116.smcl
+  {txt}log type:  {res}smcl
+ {txt}opened on:  {res}26 Feb 2017, 15:52:03
+{txt}
+{com}. 
+. * Prepare data for bootstrap - running another do file
+. //do "Do files/BS_dataprep_0311"
+. /*
+> use "Census data/DataForReg.dta", clear
+> 
+> global PredictedIncome pred_income
+> //global ns = 5
+> 
+> keep if curr_hist_match==3 // villages for which we have both the historical and the current information
+> 
+>         gen d_06 = 0
+>         replace d_06 = 1 if d_girl6!=.
+>         bys HHid: egen HHunder6 = max(d_06)
+> 
+> ***************
+> * First stage *
+> ***************
+> 
+>         duplicates drop HHid, force
+> 
+>         * (1) Using hist_wealth1 "DD on account of land revenue per cultivated acre"
+>         xi: reg monthlyincome i.caste*hist_wealth1, cluster(A2)
+>         testparm hist_wealth1 _IcasXhist* // F-stat (298K) 20.40
+>         predict pred_income
+> 
+>         * count HH in each caste
+>         gen c1 = 1 if fs==2|fs==9
+>         egen numHH_caste_fs29 = count(c1), by(caste)
+>         lab var numHH_caste_fs29 "Number of fs2/9 HH in each caste"
+> 
+>         * count HH with atleast one under six and fs=2| fs=9
+>         gen c2 = 1 if HHunder6==1 & (fs==2|fs==9)
+>         egen numHH_caste_fs29_u6 = count(c2), by(caste)
+>         lab var numHH_caste_fs29_u6 "Number of fs2/9 HH in each caste with atleast one child under 6"
+> 
+>         keep HHid pred_* numHH_caste*
+> 
+>         merge 1:m HHid using "Census data/DataForReg.dta", keep(3) nogen
+> 
+>         //save "Temporary files/temp_2504", replace
+> 
+>         //use "Temporary files/temp_2504", clear
+> 
+>         * II * rank based on predicted income per OWN youngest generation/ OWN child +2 (not directly estimated)
+>                         gen pred_inc_younggen2p =.
+>                         replace pred_inc_younggen2p = $PredictedIncome /(total_yg_own+2) if LivesWithFather==1 & LivesWithMother==1 & d_youngestgen==1
+>                         lab var pred_inc_younggen2p "Predicted HH montlyincome divided by no. in the youngest generation+ 2(parents)"
+> 
+>                         gen log_pred_inc_younggen2p = log(pred_inc_younggen2p)
+> 
+>                         sort caste log_pred_inc_younggen2p
+>                         bys caste log_pred_inc_younggen2p : gen newid = 1 if _n==1
+>                         by caste: gen rank_pred_inc_yg2p = sum(newid) if pred_inc_younggen2p!=.
+> 
+>                         bys caste: egen num_ranks = max(rank_pred_inc_yg2p)
+> 
+>                         gen ref_rank_pred_inc_yg2p = rank_pred_inc_yg2p/num_ranks
+>                         lab var ref_rank_pred_inc_yg2p "Rank in within caste income distribution"
+> 
+>                         drop newid
+>                         drop num_ranks
+> 
+>         * X * rank based on actual/reported income divided by family size
+>                         gen inc_famsize= monthlyincome/(total_yg_own+2) if LivesWithFather==1 & LivesWithMother==1 & d_youngestgen==1
+> 
+>                         gen log_inc_famsize = log(inc_famsize)
+> 
+>                         sort caste log_inc_famsize
+>                         bys caste log_inc_famsize : gen newid = 1 if _n==1
+>                         by caste: gen rank_inc_famsize = sum(newid) if inc_famsize!=.
+> 
+>                         bys caste: egen num_ranks = max(rank_inc_famsize)
+> 
+>                         gen ref_rank_inc_famsize = rank_inc_famsize/num_ranks
+>                         lab var ref_rank_inc_famsize "Rank in within caste income distribution"
+> 
+>                         drop newid
+>                         drop num_ranks
+> 
+> *Prepare data for second stage
+>         keep if fs==2 | fs==9
+>         // lab def fs 2 "Pe and family", add
+>         // lab def fs 9 "Pe and siblings living with their parents", add
+> 
+> lab var pred_income "Predicted income"
+> 
+> 
+> * 2 * individual castes
+> keep if numHH_caste_fs29_u6>=500
+> 
+> 
+> * number of 0-6 year olds in a caste: to be reported as part of the graphs
+>                 gen d_06 = 0
+>                 replace d_06 = 1 if d_girl6!=.
+>                 bys caste: egen num_06= total(d_06)
+> 
+> 
+>                 * 7 to 13 year old girls
+>                 gen d_girl713=.
+>                 replace d_girl713 = 0 if C2_4>=7 & C2_4<=13
+>                 replace d_girl713 = 1 if C2_4>=7 & C2_4<=13 & C2_3==2
+>                 lab var d_girl713 "Dummy = 1 if girl between the age of 7-13 years, 0 for boys between the age of 7-13 years"
+> 
+>                 gen d_713 = 0
+>                 replace d_713 = 1 if d_girl713!=.
+>                 bys caste: egen num_713= total(d_713)
+> 
+> save "Temporary files/readyforinc_cls", replace
+> */
+. 
+. use "readyforinc_cls", clear
+{txt}
+{com}. 
+. * use HH level data to calculate income classes by caste
+. duplicates drop HHid, force
+
+{p 0 4}{txt}Duplicates in terms of {res} HHid{p_end}
+
+{txt}(578,439 observations deleted)
+
+{com}. global income pred_inc_younggen2p
+{txt}
+{com}. gen inc_cls = .
+{txt}(179,674 missing values generated)
+
+{com}. 
+. * same as saying keep if numHH_caste_fs29_u6>=500
+. keep if caste==28| caste==38| caste==1| caste==14| caste==33 |caste==5|caste==10|caste==23|caste==7 ///
+> | caste==44 | caste==17 | caste==4
+{txt}(7,199 observations deleted)
+
+{com}. 
+. 
+. 
+. * Create income classes for castes
+. set seed 1234
+{txt}
+{com}.                 levelsof caste if numHH_caste_fs29_u6>=150, local(castenumber)
+{txt}1 4 5 7 10 14 17 23 28 33 38 44
+
+{com}.                 foreach x of local castenumber{c -(}
+{txt}  2{com}.                         sort caste HHid $income
+{txt}  3{com}.                         xtile inc_cls_`x' = $income if caste==`x', nq($numincls)
+{txt}  4{com}.                         di "caste = `x'"
+{txt}  5{com}.                         //tab inc_cls_`x' if caste==`x'
+.                         replace inc_cls = inc_cls_`x' if caste==`x'
+{txt}  6{com}.                 {c )-}
+caste = 1
+{txt}(15,191 real changes made)
+caste = 4
+(1,223 real changes made)
+caste = 5
+(2,656 real changes made)
+caste = 7
+(1,657 real changes made)
+caste = 10
+(2,593 real changes made)
+caste = 14
+(8,093 real changes made)
+caste = 17
+(1,126 real changes made)
+caste = 23
+(3,104 real changes made)
+caste = 28
+(52,136 real changes made)
+caste = 33
+(6,422 real changes made)
+caste = 38
+(34,789 real changes made)
+caste = 44
+(1,905 real changes made)
+
+{com}. 
+. * drop values with no income class assigned
+. drop if inc_cls==.
+{txt}(41,580 observations deleted)
+
+{com}. gen numcls=.
+{txt}(130,895 missing values generated)
+
+{com}. 
+. * check how many income classes created per caste
+. * stata forces identical observations to be in the same quantile
+.         levelsof caste if numHH_caste_fs29_u6>=100, local(castenumber)
+{txt}1 4 5 7 10 14 17 23 28 33 38 44
+
+{com}.         foreach x of local castenumber{c -(}
+{txt}  2{com}. 
+.                 bys caste inc_cls: replace numcls = 1 if _n==1 & caste==`x'
+{txt}  3{com}. 
+.         {c )-}
+{txt}(10 real changes made)
+(10 real changes made)
+(10 real changes made)
+(10 real changes made)
+(10 real changes made)
+(10 real changes made)
+(10 real changes made)
+(10 real changes made)
+(10 real changes made)
+(8 real changes made)
+(10 real changes made)
+(10 real changes made)
+
+{com}.         by caste: replace numcls = sum(numcls)
+{txt}(130883 real changes made)
+
+{com}.         bys caste: egen tot_numcls = max(numcls)
+{txt}
+{com}.         tab caste tot_numcls
+
+           {txt}{c |}      tot_numcls
+     caste {c |}         8         10 {c |}     Total
+{hline 11}{c +}{hline 22}{c +}{hline 10}
+         1 {c |}{res}         0     15,191 {txt}{c |}{res}    15,191 
+{txt}         4 {c |}{res}         0      1,223 {txt}{c |}{res}     1,223 
+{txt}         5 {c |}{res}         0      2,656 {txt}{c |}{res}     2,656 
+{txt}         7 {c |}{res}         0      1,657 {txt}{c |}{res}     1,657 
+{txt}        10 {c |}{res}         0      2,593 {txt}{c |}{res}     2,593 
+{txt}        14 {c |}{res}         0      8,093 {txt}{c |}{res}     8,093 
+{txt}        17 {c |}{res}         0      1,126 {txt}{c |}{res}     1,126 
+{txt}        23 {c |}{res}         0      3,104 {txt}{c |}{res}     3,104 
+{txt}        28 {c |}{res}         0     52,136 {txt}{c |}{res}    52,136 
+{txt}        33 {c |}{res}     6,422          0 {txt}{c |}{res}     6,422 
+{txt}        38 {c |}{res}         0     34,789 {txt}{c |}{res}    34,789 
+{txt}        44 {c |}{res}         0      1,905 {txt}{c |}{res}     1,905 
+{txt}{hline 11}{c +}{hline 22}{c +}{hline 10}
+     Total {c |}{res}     6,422    124,473 {txt}{c |}{res}   130,895 
+
+{txt}
+{com}. 
+. * keep only the caste and income class data for each HHid
+. keep HHid caste inc_cls
+{txt}
+{com}. keep if inc_cls!=.
+{txt}(0 observations deleted)
+
+{com}. save "Temp/HHinc_cls", replace
+{txt}file Temp/HHinc_cls.dta saved
+
+{com}. 
+. * merge back to individual level data to collapse
+. use "readyforinc_cls", clear
+{txt}
+{com}. merge m:1 HHid using "Temp/HHinc_cls"
+{res}
+{txt}{col 5}Result{col 38}# of obs.
+{col 5}{hline 41}
+{col 5}not matched{col 30}{res}         182,892
+{txt}{col 9}from master{col 30}{res}         182,892{txt}  (_merge==1)
+{col 9}from using{col 30}{res}               0{txt}  (_merge==2)
+
+{col 5}matched{col 30}{res}         575,221{txt}  (_merge==3)
+{col 5}{hline 41}
+
+{com}. 
+. keep if _m==3
+{txt}(182,892 observations deleted)
+
+{com}. 
+. * our benchamrk regressions
+.         local ranklist pred_inc_yg2p
+{txt}
+{com}.         local reglist d_girl6
+{txt}
+{com}.                         foreach reg of local reglist{c -(}
+{txt}  2{com}.                                 foreach ranktype of local ranklist{c -(}
+{txt}  3{com}.                                         * income per child *
+.                                         reg `reg' ref_rank_`ranktype', robust cluster(A2)
+{txt}  4{com}. 
+.                                         areg `reg' ref_rank_`ranktype', robust cluster(A2) absorb(caste)
+{txt}  5{com}.                                 {c )-}
+{txt}  6{com}.                         {c )-}
+
+{txt}Linear regression                               Number of obs     = {res}    72,913
+                                                {txt}F(1, 268)         =  {res}    27.99
+                                                {txt}Prob > F          = {res}    0.0000
+                                                {txt}R-squared         = {res}    0.0004
+                                                {txt}Root MSE          =    {res} .49951
+
+{txt}{ralign 79:(Std. Err. adjusted for {res:269} clusters in A2)}
+{hline 14}{c TT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{col 15}{c |}{col 27}    Robust
+{col 1}      d_girl6{col 15}{c |}      Coef.{col 27}   Std. Err.{col 39}      t{col 47}   P>|t|{col 55}     [95% Con{col 68}f. Interval]
+{hline 14}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+ref_rank_p~2p {c |}{col 15}{res}{space 2}-.0506566{col 27}{space 2}  .009575{col 38}{space 1}   -5.29{col 47}{space 3}0.000{col 55}{space 4}-.0695084{col 68}{space 3}-.0318047
+{txt}{space 8}_cons {c |}{col 15}{res}{space 2}  .510335{col 27}{space 2} .0061632{col 38}{space 1}   82.80{col 47}{space 3}0.000{col 55}{space 4} .4982005{col 68}{space 3} .5224694
+{txt}{hline 14}{c BT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{res}
+{txt}Linear regression, absorbing indicators{col 49}Number of obs{col 67}= {res}    72,913
+{txt}{col 49}F({res}   1{txt},{res}    268{txt}){col 67}= {res}     29.72
+{txt}{col 49}Prob > F{col 67}= {res}    0.0000
+{txt}{col 49}R-squared{col 67}= {res}    0.0006
+{txt}{col 49}Adj R-squared{col 67}= {res}    0.0004
+{txt}{col 49}Root MSE{col 67}= {res}    0.4995
+
+{txt}{ralign 79:(Std. Err. adjusted for {res:269} clusters in A2)}
+{hline 14}{c TT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{col 15}{c |}{col 27}    Robust
+{col 1}      d_girl6{col 15}{c |}      Coef.{col 27}   Std. Err.{col 39}      t{col 47}   P>|t|{col 55}     [95% Con{col 68}f. Interval]
+{hline 14}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+ref_rank_p~2p {c |}{col 15}{res}{space 2}-.0530795{col 27}{space 2} .0097372{col 38}{space 1}   -5.45{col 47}{space 3}0.000{col 55}{space 4}-.0722506{col 68}{space 3}-.0339083
+{txt}{space 8}_cons {c |}{col 15}{res}{space 2} .5117775{col 27}{space 2} .0062129{col 38}{space 1}   82.37{col 47}{space 3}0.000{col 55}{space 4} .4995452{col 68}{space 3} .5240098
+{txt}{hline 14}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+        caste {c |}   absorbed                                      (12 categories)
+
+{com}. 
+. * collapse to caste - income class level
+. collapse (mean) d_girl6 $income (sum)d_$agegrp , by(caste inc_cls)
+{txt}
+{com}. drop if inc_cls==.
+{txt}(0 observations deleted)
+
+{com}. 
+. * regress fraction of girls on average income
+. reg d_girl6 $income [fweight=d_$agegrp]
+
+{txt}      Source {c |}       SS           df       MS      Number of obs   ={res}    77,005
+{txt}{hline 13}{c +}{hline 34}   F(1, 77003)     = {res} 23769.28
+{txt}       Model {c |} {res} 15.5869771         1  15.5869771   {txt}Prob > F        ={res}    0.0000
+{txt}    Residual {c |} {res} 50.4956012    77,003  .000655761   {txt}R-squared       ={res}    0.2359
+{txt}{hline 13}{c +}{hline 34}   Adj R-squared   ={res}    0.2359
+{txt}       Total {c |} {res} 66.0825783    77,004  .000858171   {txt}Root MSE        =   {res} .02561
+
+{txt}{hline 14}{c TT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{col 1}      d_girl6{col 15}{c |}      Coef.{col 27}   Std. Err.{col 39}      t{col 47}   P>|t|{col 55}     [95% Con{col 68}f. Interval]
+{hline 14}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+pred_inc_y~2p {c |}{col 15}{res}{space 2}-.0400019{col 27}{space 2} .0002595{col 38}{space 1} -154.17{col 47}{space 3}0.000{col 55}{space 4}-.0405105{col 68}{space 3}-.0394934
+{txt}{space 8}_cons {c |}{col 15}{res}{space 2} .5579373{col 27}{space 2} .0004742{col 38}{space 1} 1176.60{col 47}{space 3}0.000{col 55}{space 4} .5570079{col 68}{space 3} .5588668
+{txt}{hline 14}{c BT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{res}{txt}
+{com}. 
+. * regress fraction of girls on income class dummies
+. reg d_girl6 i.inc_cls
+
+{txt}      Source {c |}       SS           df       MS      Number of obs   ={res}       118
+{txt}{hline 13}{c +}{hline 34}   F(9, 108)       = {res}     2.63
+{txt}       Model {c |} {res} .041741282         9   .00463792   {txt}Prob > F        ={res}    0.0086
+{txt}    Residual {c |} {res} .190226569       108  .001761357   {txt}R-squared       ={res}    0.1799
+{txt}{hline 13}{c +}{hline 34}   Adj R-squared   ={res}    0.1116
+{txt}       Total {c |} {res} .231967851       117  .001982631   {txt}Root MSE        =   {res} .04197
+
+{txt}{hline 13}{c TT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{col 1}     d_girl6{col 14}{c |}      Coef.{col 26}   Std. Err.{col 38}      t{col 46}   P>|t|{col 54}     [95% Con{col 67}f. Interval]
+{hline 13}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{space 5}inc_cls {c |}
+{space 10}2  {c |}{col 14}{res}{space 2}-.0209378{col 26}{space 2} .0171336{col 37}{space 1}   -1.22{col 46}{space 3}0.224{col 54}{space 4}-.0548995{col 67}{space 3}  .013024
+{txt}{space 10}3  {c |}{col 14}{res}{space 2}-.0517413{col 26}{space 2} .0175187{col 37}{space 1}   -2.95{col 46}{space 3}0.004{col 54}{space 4}-.0864663{col 67}{space 3}-.0170163
+{txt}{space 10}4  {c |}{col 14}{res}{space 2}-.0511604{col 26}{space 2} .0171336{col 37}{space 1}   -2.99{col 46}{space 3}0.003{col 54}{space 4}-.0851222{col 67}{space 3}-.0171987
+{txt}{space 10}5  {c |}{col 14}{res}{space 2}-.0530689{col 26}{space 2} .0171336{col 37}{space 1}   -3.10{col 46}{space 3}0.002{col 54}{space 4}-.0870306{col 67}{space 3}-.0191072
+{txt}{space 10}6  {c |}{col 14}{res}{space 2}-.0615781{col 26}{space 2} .0171336{col 37}{space 1}   -3.59{col 46}{space 3}0.000{col 54}{space 4}-.0955399{col 67}{space 3}-.0276164
+{txt}{space 10}7  {c |}{col 14}{res}{space 2}-.0530775{col 26}{space 2} .0175187{col 37}{space 1}   -3.03{col 46}{space 3}0.003{col 54}{space 4}-.0878025{col 67}{space 3}-.0183525
+{txt}{space 10}8  {c |}{col 14}{res}{space 2}-.0261462{col 26}{space 2} .0171336{col 37}{space 1}   -1.53{col 46}{space 3}0.130{col 54}{space 4} -.060108{col 67}{space 3} .0078155
+{txt}{space 10}9  {c |}{col 14}{res}{space 2}-.0426633{col 26}{space 2} .0171336{col 37}{space 1}   -2.49{col 46}{space 3}0.014{col 54}{space 4}-.0766251{col 67}{space 3}-.0087016
+{txt}{space 9}10  {c |}{col 14}{res}{space 2}-.0572177{col 26}{space 2} .0171336{col 37}{space 1}   -3.34{col 46}{space 3}0.001{col 54}{space 4}-.0911794{col 67}{space 3} -.023256
+{txt}{space 12} {c |}
+{space 7}_cons {c |}{col 14}{res}{space 2} .5256908{col 26}{space 2} .0121153{col 37}{space 1}   43.39{col 46}{space 3}0.000{col 54}{space 4} .5016763{col 67}{space 3} .5497054
+{txt}{hline 13}{c BT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{res}{txt}
+{com}. 
+.         * same regression graphically
+.         sort inc_cls caste
+{txt}
+{com}.         by inc_cls: egen mean_frac = mean(d_girl6)
+{txt}
+{com}.         tw line mean_frac inc_cls
+{res}{txt}
+{com}. 
+. sort caste inc_cls
+{txt}
+{com}. ren pred_inc_younggen2p inc
+{res}{txt}
+{com}. gen f = d_girl6 * d_713
+{txt}
+{com}. gen m = d_713 - f
+{txt}
+{com}. ren d_713 t
+{res}{txt}
+{com}. gen csr = m/f
+{txt}
+{com}. gen X = (m+f)/2
+{txt}
+{com}. gen Hk = (csr-1)/(csr+1)
+{txt}
+{com}. order inc m f t csr Hk X caste inc_cls d_girl6 mean_frac
+{txt}
+{com}. 
+{txt}end of do-file
+
+{com}. save "/home/lohia/projects/sex_sel/data/713_10class.dta", replace
+{txt}file /home/lohia/projects/sex_sel/data/713_10class.dta saved
+
+{com}. use 06_10class
+
+. outsheet using caste.csv, comma
+
+. use 06_6class
+
+. levelsof(caste)
+{txt}1 4 5 7 10 14 17 23 28 33 38 44
+
+{com}. outsheet using caste`1'.csv, comma
+
+. pwd
+{res}/home/lohia/projects/sex_sel/data
+
+{com}. outsheet using "caste`1'.csv", comma
+{err}{p 0 4 2}
+file caste.csv
+already exists
+{p_end}
+{txt}{search r(602), local:r(602);}
+
+{com}. "hello"+`1'
+{bf}{err}"hello{sf} is not a valid command name
+{txt}{search r(199), local:r(199);}
+
+{com}. display "hello"+`1'
+{res}hello{err}invalid syntax
+{txt}{search r(198), local:r(198);}
+
+{com}. local i = `1'
+{err}invalid syntax
+{txt}{search r(198), local:r(198);}
+
+{com}. local i 1
+
+. outsheet using caste`i'.csv, comma
+
+. use 06_6class
+
+. do "/tmp/SD22951.000000"
+{txt}
+{com}. levelsof caste, local(levels) 
+{txt}1 4 5 7 10 14 17 23 28 33 38 44
+
+{com}. foreach l of local levels {c -(}
+{txt}  2{com}.         preserve
+{txt}  3{com}.         keep if caste == `l'
+{txt}  4{com}.         drop caste inc_cls d_girl6 mean_frac
+{txt}  5{com}.         outsheet using caste`l'.csv, comma
+{txt}  6{com}.         restore
+{txt}  7{com}. {c )-}
+{txt}(66 observations deleted)
+(66 observations deleted)
+(66 observations deleted)
+(66 observations deleted)
+(66 observations deleted)
+(66 observations deleted)
+(66 observations deleted)
+(66 observations deleted)
+(66 observations deleted)
+(66 observations deleted)
+(66 observations deleted)
+(66 observations deleted)
+
+{com}. 
+{txt}end of do-file
+
+{com}. use 713_6class
+
+. do "/tmp/SD22951.000000"
+{txt}
+{com}. levelsof caste, local(levels) 
+{txt}1 4 5 7 10 14 17 23 28 33 38 44
+
+{com}. foreach l of local levels {c -(}
+{txt}  2{com}.         preserve
+{txt}  3{com}.         keep if caste == `l'
+{txt}  4{com}.         drop caste inc_cls d_girl6 mean_frac
+{txt}  5{com}.         outsheet using caste`l'.csv, comma
+{txt}  6{com}.         restore
+{txt}  7{com}. {c )-}
+{txt}(66 observations deleted)
+(66 observations deleted)
+(66 observations deleted)
+(66 observations deleted)
+(66 observations deleted)
+(66 observations deleted)
+(66 observations deleted)
+(66 observations deleted)
+(66 observations deleted)
+(66 observations deleted)
+(66 observations deleted)
+(66 observations deleted)
+
+{com}. 
+{txt}end of do-file
+
+{com}. use 713_8class
+
+. do "/tmp/SD22951.000000"
+{txt}
+{com}. levelsof caste, local(levels) 
+{txt}1 4 5 7 10 14 17 23 28 33 38 44
+
+{com}. foreach l of local levels {c -(}
+{txt}  2{com}.         preserve
+{txt}  3{com}.         keep if caste == `l'
+{txt}  4{com}.         drop caste inc_cls d_girl6 mean_frac
+{txt}  5{com}.         outsheet using caste`l'.csv, comma
+{txt}  6{com}.         restore
+{txt}  7{com}. {c )-}
+{txt}(88 observations deleted)
+(88 observations deleted)
+(88 observations deleted)
+(88 observations deleted)
+(88 observations deleted)
+(88 observations deleted)
+(88 observations deleted)
+(88 observations deleted)
+(88 observations deleted)
+(88 observations deleted)
+(88 observations deleted)
+(88 observations deleted)
+
+{com}. 
+{txt}end of do-file
+
+{com}. use 713_10class
+
+. do "/tmp/SD22951.000000"
+{txt}
+{com}. levelsof caste, local(levels) 
+{txt}1 4 5 7 10 14 17 23 28 33 38 44
+
+{com}. foreach l of local levels {c -(}
+{txt}  2{com}.         preserve
+{txt}  3{com}.         keep if caste == `l'
+{txt}  4{com}.         drop caste inc_cls d_girl6 mean_frac
+{txt}  5{com}.         outsheet using caste`l'.csv, comma
+{txt}  6{com}.         restore
+{txt}  7{com}. {c )-}
+{txt}(108 observations deleted)
+(108 observations deleted)
+(108 observations deleted)
+(108 observations deleted)
+(108 observations deleted)
+(108 observations deleted)
+(108 observations deleted)
+(108 observations deleted)
+(108 observations deleted)
+(110 observations deleted)
+(108 observations deleted)
+(108 observations deleted)
+
+{com}. 
+{txt}end of do-file
+
+{com}. exit
+{err}{hline 2}Break{hline 2}
+{txt}{search r(1), local:r(1);}
+
+{com}. exit
