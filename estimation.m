@@ -50,5 +50,5 @@ estimates
 % problem = createOptimProblem('fmincon','x0',pguess,'objective',temp5,'lb',[5,0.5],'ub',[25,1]);
 % ms = MultiStart('PlotFcns',@gsplotbestf,'UseParallel',true);
 % [xmin,fmin,flag,outpt,allmins] = run(ms,problem,15)
-% delete(gcp('nocreate'))
-% save('result.mat');
+delete(gcp('nocreate'))
+save('result.mat');
