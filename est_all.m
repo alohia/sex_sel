@@ -7,9 +7,10 @@ num_castes = numel(castes(:,1));
 SSR = 0;
 for i = 1:num_castes
     [X, Hky ,n] = getdata(castes(i,1));
-    % X(:,1) = X(:,1)*10;
+    X(:,1) = X(:,1)*10;
     Y = X;
-    SSR = SSR + castes(i,2)*sumsqr(Hky - solve_model(X,Y,params));
+    SSR = SSR + sumsqr(Hky - solve_model(X,Y,params));
+%     SSR = SSR + castes(i,2)*sumsqr(Hky - solve_model(X,Y,params));
 end
 end
 
