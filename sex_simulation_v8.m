@@ -1,7 +1,7 @@
 clc;
 clearvars;
 figurepath = strcat('./Figures/');
-jlim=2;
+jlim=1;
 l=0;
 tic
 for j=1:jlim
@@ -18,8 +18,8 @@ for j=1:jlim
     %vr = 0.27;
     mu = log(m) - (0.5*log((vr/(m*m))+1));
     sig = sqrt(log((vr/(m*m))+1));
-    %Xdist = makedist('Normal','mu',m,'sigma',vr);
-    Xdist = makedist('Lognormal','mu',mu,'sigma',sig);
+    Xdist = makedist('Normal','mu',m,'sigma',vr);
+    %Xdist = makedist('Lognormal','mu',mu,'sigma',sig);
     %Xdist = makedist('Uniform','lower',xin,'upper',xl);
     X(:,1) = linspace(xin,xl,n); %Income classes
     X(:,2) = pdf(Xdist,X(:,1));
@@ -174,7 +174,7 @@ figure(6)
 set(figure(6),'defaulttextinterpreter','latex');
 hold on
 spy(kvals(:,:,1),'r')
-spy(kvals(:,:,2),'g')
+%spy(kvals(:,:,2),'g')
 %spy(kvals(:,:,3),'b')
 grid on
 set(gca,'YDir','normal', 'GridLineStyle', ':')

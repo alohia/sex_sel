@@ -1,4 +1,4 @@
-function [ Hky,ks,CYy,cYy,CXx,cXx,ky,vyy,vxx,i,dy,S ] = solve_model( X, Y, params )
+function [ Hky,ks,CYy,cYy,CXx,cXx,ky,vyy,vxx,i,dy,S,dgiven ] = solve_model( X, Y, params )
 %solve_model Function that takes X, Y and the parameters and returns H(k*)
 %   Solving the model recursively starting from the topmost income class
 
@@ -55,7 +55,7 @@ while(1)
         disp('wrong solution')
     end
     
-    [~,xend,vxx,Hky,ks,CYy,cYy,CXx,cXx,ky,vyy,dy,S ] = set_vin(n,H,al,vinit,X,Y,i,vxx);
+    [~,xend,vxx,Hky,ks,CYy,cYy,CXx,cXx,ky,vyy,dy,S,dgiven ] = set_vin(n,H,al,vinit,X,Y,i,vxx);
     while (xend ~= 0)
         vxx(xend,i) = S(xend,1);
         CXx(xend,2) = my_psi(S(xend,1),al);

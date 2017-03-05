@@ -3,7 +3,7 @@
       name:  {res}<unnamed>
        {txt}log:  {res}/home/lohia/projects/sex_sel/data/Logs/treg_151116.smcl
   {txt}log type:  {res}smcl
- {txt}opened on:  {res}26 Feb 2017, 15:52:03
+ {txt}opened on:  {res} 4 Mar 2017, 17:52:12
 {txt}
 {com}. 
 . * Prepare data for bootstrap - running another do file
@@ -197,18 +197,18 @@ caste = 44
 .                 bys caste inc_cls: replace numcls = 1 if _n==1 & caste==`x'
 {txt}  3{com}. 
 .         {c )-}
-{txt}(10 real changes made)
-(10 real changes made)
-(10 real changes made)
-(10 real changes made)
-(10 real changes made)
-(10 real changes made)
-(10 real changes made)
-(10 real changes made)
-(10 real changes made)
+{txt}(8 real changes made)
 (8 real changes made)
-(10 real changes made)
-(10 real changes made)
+(8 real changes made)
+(8 real changes made)
+(8 real changes made)
+(8 real changes made)
+(8 real changes made)
+(8 real changes made)
+(8 real changes made)
+(8 real changes made)
+(8 real changes made)
+(8 real changes made)
 
 {com}.         by caste: replace numcls = sum(numcls)
 {txt}(130883 real changes made)
@@ -217,23 +217,23 @@ caste = 44
 {txt}
 {com}.         tab caste tot_numcls
 
-           {txt}{c |}      tot_numcls
-     caste {c |}         8         10 {c |}     Total
-{hline 11}{c +}{hline 22}{c +}{hline 10}
-         1 {c |}{res}         0     15,191 {txt}{c |}{res}    15,191 
-{txt}         4 {c |}{res}         0      1,223 {txt}{c |}{res}     1,223 
-{txt}         5 {c |}{res}         0      2,656 {txt}{c |}{res}     2,656 
-{txt}         7 {c |}{res}         0      1,657 {txt}{c |}{res}     1,657 
-{txt}        10 {c |}{res}         0      2,593 {txt}{c |}{res}     2,593 
-{txt}        14 {c |}{res}         0      8,093 {txt}{c |}{res}     8,093 
-{txt}        17 {c |}{res}         0      1,126 {txt}{c |}{res}     1,126 
-{txt}        23 {c |}{res}         0      3,104 {txt}{c |}{res}     3,104 
-{txt}        28 {c |}{res}         0     52,136 {txt}{c |}{res}    52,136 
-{txt}        33 {c |}{res}     6,422          0 {txt}{c |}{res}     6,422 
-{txt}        38 {c |}{res}         0     34,789 {txt}{c |}{res}    34,789 
-{txt}        44 {c |}{res}         0      1,905 {txt}{c |}{res}     1,905 
-{txt}{hline 11}{c +}{hline 22}{c +}{hline 10}
-     Total {c |}{res}     6,422    124,473 {txt}{c |}{res}   130,895 
+           {txt}{c |} tot_numcls
+     caste {c |}         8 {c |}     Total
+{hline 11}{c +}{hline 11}{c +}{hline 10}
+         1 {c |}{res}    15,191 {txt}{c |}{res}    15,191 
+{txt}         4 {c |}{res}     1,223 {txt}{c |}{res}     1,223 
+{txt}         5 {c |}{res}     2,656 {txt}{c |}{res}     2,656 
+{txt}         7 {c |}{res}     1,657 {txt}{c |}{res}     1,657 
+{txt}        10 {c |}{res}     2,593 {txt}{c |}{res}     2,593 
+{txt}        14 {c |}{res}     8,093 {txt}{c |}{res}     8,093 
+{txt}        17 {c |}{res}     1,126 {txt}{c |}{res}     1,126 
+{txt}        23 {c |}{res}     3,104 {txt}{c |}{res}     3,104 
+{txt}        28 {c |}{res}    52,136 {txt}{c |}{res}    52,136 
+{txt}        33 {c |}{res}     6,422 {txt}{c |}{res}     6,422 
+{txt}        38 {c |}{res}    34,789 {txt}{c |}{res}    34,789 
+{txt}        44 {c |}{res}     1,905 {txt}{c |}{res}     1,905 
+{txt}{hline 11}{c +}{hline 11}{c +}{hline 10}
+     Total {c |}{res}   130,895 {txt}{c |}{res}   130,895 
 
 {txt}
 {com}. 
@@ -244,7 +244,8 @@ caste = 44
 {txt}(0 observations deleted)
 
 {com}. save "Temp/HHinc_cls", replace
-{txt}file Temp/HHinc_cls.dta saved
+{txt}(note: file Temp/HHinc_cls.dta not found)
+file Temp/HHinc_cls.dta saved
 
 {com}. 
 . * merge back to individual level data to collapse
@@ -323,46 +324,44 @@ ref_rank_p~2p {c |}{col 15}{res}{space 2}-.0530795{col 27}{space 2} .0097372{col
 . * regress fraction of girls on average income
 . reg d_girl6 $income [fweight=d_$agegrp]
 
-{txt}      Source {c |}       SS           df       MS      Number of obs   ={res}    77,005
-{txt}{hline 13}{c +}{hline 34}   F(1, 77003)     = {res} 23769.28
-{txt}       Model {c |} {res} 15.5869771         1  15.5869771   {txt}Prob > F        ={res}    0.0000
-{txt}    Residual {c |} {res} 50.4956012    77,003  .000655761   {txt}R-squared       ={res}    0.2359
-{txt}{hline 13}{c +}{hline 34}   Adj R-squared   ={res}    0.2359
-{txt}       Total {c |} {res} 66.0825783    77,004  .000858171   {txt}Root MSE        =   {res} .02561
+{txt}      Source {c |}       SS           df       MS      Number of obs   ={res}    73,050
+{txt}{hline 13}{c +}{hline 34}   F(1, 73048)     = {res}  6396.99
+{txt}       Model {c |} {res} 3.94945976         1  3.94945976   {txt}Prob > F        ={res}    0.0000
+{txt}    Residual {c |} {res} 45.0993481    73,048  .000617393   {txt}R-squared       ={res}    0.0805
+{txt}{hline 13}{c +}{hline 34}   Adj R-squared   ={res}    0.0805
+{txt}       Total {c |} {res} 49.0488078    73,049  .000671451   {txt}Root MSE        =   {res} .02485
 
 {txt}{hline 14}{c TT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
 {col 1}      d_girl6{col 15}{c |}      Coef.{col 27}   Std. Err.{col 39}      t{col 47}   P>|t|{col 55}     [95% Con{col 68}f. Interval]
 {hline 14}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
-pred_inc_y~2p {c |}{col 15}{res}{space 2}-.0400019{col 27}{space 2} .0002595{col 38}{space 1} -154.17{col 47}{space 3}0.000{col 55}{space 4}-.0405105{col 68}{space 3}-.0394934
-{txt}{space 8}_cons {c |}{col 15}{res}{space 2} .5579373{col 27}{space 2} .0004742{col 38}{space 1} 1176.60{col 47}{space 3}0.000{col 55}{space 4} .5570079{col 68}{space 3} .5588668
+pred_inc_y~2p {c |}{col 15}{res}{space 2}  -.01776{col 27}{space 2} .0002221{col 38}{space 1}  -79.98{col 47}{space 3}0.000{col 55}{space 4}-.0181952{col 68}{space 3}-.0173248
+{txt}{space 8}_cons {c |}{col 15}{res}{space 2} .5150912{col 27}{space 2} .0004458{col 38}{space 1} 1155.54{col 47}{space 3}0.000{col 55}{space 4} .5142175{col 68}{space 3} .5159649
 {txt}{hline 14}{c BT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
 {res}{txt}
 {com}. 
 . * regress fraction of girls on income class dummies
 . reg d_girl6 i.inc_cls
 
-{txt}      Source {c |}       SS           df       MS      Number of obs   ={res}       118
-{txt}{hline 13}{c +}{hline 34}   F(9, 108)       = {res}     2.63
-{txt}       Model {c |} {res} .041741282         9   .00463792   {txt}Prob > F        ={res}    0.0086
-{txt}    Residual {c |} {res} .190226569       108  .001761357   {txt}R-squared       ={res}    0.1799
-{txt}{hline 13}{c +}{hline 34}   Adj R-squared   ={res}    0.1116
-{txt}       Total {c |} {res} .231967851       117  .001982631   {txt}Root MSE        =   {res} .04197
+{txt}      Source {c |}       SS           df       MS      Number of obs   ={res}        96
+{txt}{hline 13}{c +}{hline 34}   F(7, 88)        = {res}     2.14
+{txt}       Model {c |} {res} .029334129         7   .00419059   {txt}Prob > F        ={res}    0.0475
+{txt}    Residual {c |} {res} .172349091        88  .001958512   {txt}R-squared       ={res}    0.1454
+{txt}{hline 13}{c +}{hline 34}   Adj R-squared   ={res}    0.0775
+{txt}       Total {c |} {res} .201683219        95  .002122981   {txt}Root MSE        =   {res} .04426
 
 {txt}{hline 13}{c TT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
 {col 1}     d_girl6{col 14}{c |}      Coef.{col 26}   Std. Err.{col 38}      t{col 46}   P>|t|{col 54}     [95% Con{col 67}f. Interval]
 {hline 13}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
 {space 5}inc_cls {c |}
-{space 10}2  {c |}{col 14}{res}{space 2}-.0209378{col 26}{space 2} .0171336{col 37}{space 1}   -1.22{col 46}{space 3}0.224{col 54}{space 4}-.0548995{col 67}{space 3}  .013024
-{txt}{space 10}3  {c |}{col 14}{res}{space 2}-.0517413{col 26}{space 2} .0175187{col 37}{space 1}   -2.95{col 46}{space 3}0.004{col 54}{space 4}-.0864663{col 67}{space 3}-.0170163
-{txt}{space 10}4  {c |}{col 14}{res}{space 2}-.0511604{col 26}{space 2} .0171336{col 37}{space 1}   -2.99{col 46}{space 3}0.003{col 54}{space 4}-.0851222{col 67}{space 3}-.0171987
-{txt}{space 10}5  {c |}{col 14}{res}{space 2}-.0530689{col 26}{space 2} .0171336{col 37}{space 1}   -3.10{col 46}{space 3}0.002{col 54}{space 4}-.0870306{col 67}{space 3}-.0191072
-{txt}{space 10}6  {c |}{col 14}{res}{space 2}-.0615781{col 26}{space 2} .0171336{col 37}{space 1}   -3.59{col 46}{space 3}0.000{col 54}{space 4}-.0955399{col 67}{space 3}-.0276164
-{txt}{space 10}7  {c |}{col 14}{res}{space 2}-.0530775{col 26}{space 2} .0175187{col 37}{space 1}   -3.03{col 46}{space 3}0.003{col 54}{space 4}-.0878025{col 67}{space 3}-.0183525
-{txt}{space 10}8  {c |}{col 14}{res}{space 2}-.0261462{col 26}{space 2} .0171336{col 37}{space 1}   -1.53{col 46}{space 3}0.130{col 54}{space 4} -.060108{col 67}{space 3} .0078155
-{txt}{space 10}9  {c |}{col 14}{res}{space 2}-.0426633{col 26}{space 2} .0171336{col 37}{space 1}   -2.49{col 46}{space 3}0.014{col 54}{space 4}-.0766251{col 67}{space 3}-.0087016
-{txt}{space 9}10  {c |}{col 14}{res}{space 2}-.0572177{col 26}{space 2} .0171336{col 37}{space 1}   -3.34{col 46}{space 3}0.001{col 54}{space 4}-.0911794{col 67}{space 3} -.023256
+{space 10}2  {c |}{col 14}{res}{space 2}-.0276527{col 26}{space 2} .0180671{col 37}{space 1}   -1.53{col 46}{space 3}0.129{col 54}{space 4}-.0635572{col 67}{space 3} .0082517
+{txt}{space 10}3  {c |}{col 14}{res}{space 2}-.0509026{col 26}{space 2} .0180671{col 37}{space 1}   -2.82{col 46}{space 3}0.006{col 54}{space 4}-.0868071{col 67}{space 3}-.0149981
+{txt}{space 10}4  {c |}{col 14}{res}{space 2}-.0471271{col 26}{space 2} .0180671{col 37}{space 1}   -2.61{col 46}{space 3}0.011{col 54}{space 4}-.0830316{col 67}{space 3}-.0112226
+{txt}{space 10}5  {c |}{col 14}{res}{space 2}-.0576951{col 26}{space 2} .0180671{col 37}{space 1}   -3.19{col 46}{space 3}0.002{col 54}{space 4}-.0935996{col 67}{space 3}-.0217906
+{txt}{space 10}6  {c |}{col 14}{res}{space 2}-.0477189{col 26}{space 2} .0180671{col 37}{space 1}   -2.64{col 46}{space 3}0.010{col 54}{space 4}-.0836233{col 67}{space 3}-.0118144
+{txt}{space 10}7  {c |}{col 14}{res}{space 2} -.033946{col 26}{space 2} .0180671{col 37}{space 1}   -1.88{col 46}{space 3}0.064{col 54}{space 4}-.0698505{col 67}{space 3} .0019585
+{txt}{space 10}8  {c |}{col 14}{res}{space 2}-.0507365{col 26}{space 2} .0180671{col 37}{space 1}   -2.81{col 46}{space 3}0.006{col 54}{space 4} -.086641{col 67}{space 3}-.0148321
 {txt}{space 12} {c |}
-{space 7}_cons {c |}{col 14}{res}{space 2} .5256908{col 26}{space 2} .0121153{col 37}{space 1}   43.39{col 46}{space 3}0.000{col 54}{space 4} .5016763{col 67}{space 3} .5497054
+{space 7}_cons {c |}{col 14}{res}{space 2} .5221251{col 26}{space 2} .0127753{col 37}{space 1}   40.87{col 46}{space 3}0.000{col 54}{space 4} .4967367{col 67}{space 3} .5475134
 {txt}{hline 13}{c BT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
 {res}{txt}
 {com}. 
@@ -378,11 +377,11 @@ pred_inc_y~2p {c |}{col 15}{res}{space 2}-.0400019{col 27}{space 2} .0002595{col
 {txt}
 {com}. ren pred_inc_younggen2p inc
 {res}{txt}
-{com}. gen f = d_girl6 * d_713
+{com}. gen f = d_girl6 * d_06
 {txt}
-{com}. gen m = d_713 - f
+{com}. gen m = d_06 - f
 {txt}
-{com}. ren d_713 t
+{com}. ren d_06 t
 {res}{txt}
 {com}. gen csr = m/f
 {txt}
@@ -391,113 +390,6 @@ pred_inc_y~2p {c |}{col 15}{res}{space 2}-.0400019{col 27}{space 2} .0002595{col
 {com}. gen Hk = (csr-1)/(csr+1)
 {txt}
 {com}. order inc m f t csr Hk X caste inc_cls d_girl6 mean_frac
-{txt}
-{com}. 
-{txt}end of do-file
-
-{com}. save "/home/lohia/projects/sex_sel/data/713_10class.dta", replace
-{txt}file /home/lohia/projects/sex_sel/data/713_10class.dta saved
-
-{com}. use 06_10class
-
-. outsheet using caste.csv, comma
-
-. use 06_6class
-
-. levelsof(caste)
-{txt}1 4 5 7 10 14 17 23 28 33 38 44
-
-{com}. outsheet using caste`1'.csv, comma
-
-. pwd
-{res}/home/lohia/projects/sex_sel/data
-
-{com}. outsheet using "caste`1'.csv", comma
-{err}{p 0 4 2}
-file caste.csv
-already exists
-{p_end}
-{txt}{search r(602), local:r(602);}
-
-{com}. "hello"+`1'
-{bf}{err}"hello{sf} is not a valid command name
-{txt}{search r(199), local:r(199);}
-
-{com}. display "hello"+`1'
-{res}hello{err}invalid syntax
-{txt}{search r(198), local:r(198);}
-
-{com}. local i = `1'
-{err}invalid syntax
-{txt}{search r(198), local:r(198);}
-
-{com}. local i 1
-
-. outsheet using caste`i'.csv, comma
-
-. use 06_6class
-
-. do "/tmp/SD22951.000000"
-{txt}
-{com}. levelsof caste, local(levels) 
-{txt}1 4 5 7 10 14 17 23 28 33 38 44
-
-{com}. foreach l of local levels {c -(}
-{txt}  2{com}.         preserve
-{txt}  3{com}.         keep if caste == `l'
-{txt}  4{com}.         drop caste inc_cls d_girl6 mean_frac
-{txt}  5{com}.         outsheet using caste`l'.csv, comma
-{txt}  6{com}.         restore
-{txt}  7{com}. {c )-}
-{txt}(66 observations deleted)
-(66 observations deleted)
-(66 observations deleted)
-(66 observations deleted)
-(66 observations deleted)
-(66 observations deleted)
-(66 observations deleted)
-(66 observations deleted)
-(66 observations deleted)
-(66 observations deleted)
-(66 observations deleted)
-(66 observations deleted)
-
-{com}. 
-{txt}end of do-file
-
-{com}. use 713_6class
-
-. do "/tmp/SD22951.000000"
-{txt}
-{com}. levelsof caste, local(levels) 
-{txt}1 4 5 7 10 14 17 23 28 33 38 44
-
-{com}. foreach l of local levels {c -(}
-{txt}  2{com}.         preserve
-{txt}  3{com}.         keep if caste == `l'
-{txt}  4{com}.         drop caste inc_cls d_girl6 mean_frac
-{txt}  5{com}.         outsheet using caste`l'.csv, comma
-{txt}  6{com}.         restore
-{txt}  7{com}. {c )-}
-{txt}(66 observations deleted)
-(66 observations deleted)
-(66 observations deleted)
-(66 observations deleted)
-(66 observations deleted)
-(66 observations deleted)
-(66 observations deleted)
-(66 observations deleted)
-(66 observations deleted)
-(66 observations deleted)
-(66 observations deleted)
-(66 observations deleted)
-
-{com}. 
-{txt}end of do-file
-
-{com}. use 713_8class
-
-. do "/tmp/SD22951.000000"
 {txt}
 {com}. levelsof caste, local(levels) 
 {txt}1 4 5 7 10 14 17 23 28 33 38 44
@@ -525,38 +417,7 @@ already exists
 {com}. 
 {txt}end of do-file
 
-{com}. use 713_10class
+{com}. save "/home/lohia/projects/sex_sel/data/06_8class.dta"
+{txt}file /home/lohia/projects/sex_sel/data/06_8class.dta saved
 
-. do "/tmp/SD22951.000000"
-{txt}
-{com}. levelsof caste, local(levels) 
-{txt}1 4 5 7 10 14 17 23 28 33 38 44
-
-{com}. foreach l of local levels {c -(}
-{txt}  2{com}.         preserve
-{txt}  3{com}.         keep if caste == `l'
-{txt}  4{com}.         drop caste inc_cls d_girl6 mean_frac
-{txt}  5{com}.         outsheet using caste`l'.csv, comma
-{txt}  6{com}.         restore
-{txt}  7{com}. {c )-}
-{txt}(108 observations deleted)
-(108 observations deleted)
-(108 observations deleted)
-(108 observations deleted)
-(108 observations deleted)
-(108 observations deleted)
-(108 observations deleted)
-(108 observations deleted)
-(108 observations deleted)
-(110 observations deleted)
-(108 observations deleted)
-(108 observations deleted)
-
-{com}. 
-{txt}end of do-file
-
-{com}. exit
-{err}{hline 2}Break{hline 2}
-{txt}{search r(1), local:r(1);}
-
-{com}. exit
+{com}. exit, clear

@@ -14,7 +14,7 @@ global date 151116
 ********************************
 * choose from 6, 8 or 10
 
-global numincls = 10
+global numincls = 8
 ********************************
 
 *****************
@@ -22,7 +22,7 @@ global numincls = 10
 *****************
 * choose from "06" or "713"
 
-global agegrp = "713"
+global agegrp = "06"
 
 ******************
 
@@ -218,9 +218,9 @@ reg d_girl6 i.inc_cls
 
 sort caste inc_cls
 ren pred_inc_younggen2p inc
-gen f = d_girl6 * d_713
-gen m = d_713 - f
-ren d_713 t
+gen f = d_girl6 * d_06
+gen m = d_06 - f
+ren d_06 t
 gen csr = m/f
 gen X = (m+f)/2
 gen Hk = (csr-1)/(csr+1)
