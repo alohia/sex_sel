@@ -4,7 +4,7 @@ function [ X, Hk_data, n ] = getdata( caste )
 
 % Import data
 %set(0,'DefaultFigureVisible','off');  % all subsequent figures "off"
-filepath = strcat('./data/713_10class/caste', num2str(caste), '.csv');
+filepath = strcat('./data/06_8class/caste', num2str(caste), '.csv');
 mydata = csvread(filepath, 1);
 data = struct('inc', [], 'm', [],'f', [],'t', [], 'csr', [], 'Hk', [], 'X', []);
 data.inc = mydata(:,1);

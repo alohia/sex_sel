@@ -17,6 +17,7 @@ al = 0.6; %exogenous alpha - husband's share
 params= [a,al];
 sample_num = castes(end);
 castes = castes(1:end-1);
+disp(castes)
 % index = 1;
 
 pguess = params;
@@ -28,8 +29,8 @@ pguess = params;
 
 % estimates(:,1) = castes;
 
-delete(gcp('nocreate')) % Delete any existing parallel pool
-parpool % Start a parallel pool
+%delete(gcp('nocreate')) % Delete any existing parallel pool
+%parpool % Start a parallel pool
 
 
 % for caste = castes
@@ -52,7 +53,8 @@ parpool % Start a parallel pool
 % problem = createOptimProblem('lsqnonlin','x0',pguess,'objective',temp4,'lb',[3,0.2],'ub',[100,1]);
 temp5 = @(pars) est_all(castes,pars);
 problem = createOptimProblem('fmincon','x0',pguess,'objective',temp5,'lb',[3,0.2],'ub',[35,1]);
-ms = MultiStart('PlotFcns',@gsplotbestf,'UseParallel',true);
+ms = MultiStart();
+% ms = MultiStart('PlotFcns',@gsplotbestf,'UseParallel',true);
 [xmin,fmin,flag,outpt,allmins] = run(ms,problem,30)
-delete(gcp('nocreate'))
+%delete(gcp('nocreate'))
 save(strcat('./bs_results/result',num2str(sample_num),'.mat'));
