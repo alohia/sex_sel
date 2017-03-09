@@ -1,5 +1,4 @@
 clc;
-clearvars;
 
 sample_num = castes(end);
 castes = castes(1:end-1);
