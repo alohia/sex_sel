@@ -1,7 +1,7 @@
 clc;
 clearvars;
 figurepath = strcat('./Figures/');
-jlim=2;
+jlim=1;
 l=0;
 tic
 for j=1:jlim
@@ -55,8 +55,8 @@ for j=1:jlim
     a = 10.1179; %upper limit for H distribution
     al = 0.6043; %exogenous alpha - husband's share
     
-    a = 7 + 8*l;
-    al = 0.6 - 0*l;
+    a = 15 + 0*8*l;
+    al = 0.7 - 0*l;
     
     params = [a,al];
 
