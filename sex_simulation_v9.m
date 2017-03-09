@@ -8,7 +8,7 @@ for j=1:jlim
     
     pop = 72943;
     nclass = 10;
-    n = 20; %Number of income classes
+    n = 100; %Number of income classes
     X = zeros(n,1);
     xin = 0.5595853 - 0*(0.01*l) + 0.6;
     xl = 3.488218 + 0*(0.01*l);
@@ -55,8 +55,8 @@ for j=1:jlim
     a = 10.1179; %upper limit for H distribution
     al = 0.6043; %exogenous alpha - husband's share
     
-    a = 12.0153;
-    al = 0.6 + 0.2*l;
+    a = 7 + 8*l;
+    al = 0.6 - 0*l;
     
     params = [a,al];
 
@@ -73,7 +73,9 @@ for j=1:jlim
     d(:,j) = dy(:,2);
     d(d(:,j)==0,j) = NaN;
     dgiv(:,j) = dgiven(:,2);
+    dgiv(dgiv(:,j)==0,j) = NaN;
     alph(j) = al;
+    as(j) = a;
     kvals(:,:,j) = ks(:,:,end);
     %var(j) = vr;
     l=l+1;
@@ -243,24 +245,27 @@ close
 figure(10)
 j=1;
 set(figure(10),'defaulttextinterpreter','latex');
-title(strcat('Dowry and Pr(Girl)'),'FontSize',14)
+title(strcat('Dowry/Wealth and Pr(Girl)',' | $\alpha=$',num2str(al)),'FontSize',14)
 xlabel('Income-class rank','FontSize',14)
+lvar2={};
 hold on
 for j=1:jlim
-    yyaxis left
-    plot(linspace(1,n,n),d(:,j))
     yyaxis right
+    plot(linspace(1,n,n),d(:,j)./X(:,1))
+    yyaxis left
     plot(linspace(1,n,n),PG(:,j))
+    lvar2{j} = strcat('a = ',num2str(as(j)));
 end
-yyaxis left
-ylabel('$d$','FontSize',14)
 yyaxis right
+ylabel('$d/x$','FontSize',14)
+yyaxis left
 ylabel('Pr(Girl)','FontSize',14)
 % set(get(ax(1),'Ylabel'),'String','$d$','FontSize',14)
 % set(get(ax(2),'Ylabel'),'String','Pr(Girl)','FontSize',14)
 % ylabel(gca(1),'$d$','FontSize',14)
 % ylabel(gca(2),'Pr(Girl)','FontSize',14)
-legend(lvar,'Location','northwest')
+legend(lvar2,'Location','southwest')
+legend('boxoff')
 print('-dpdf', strcat(figurepath, 'd+Pr.pdf'));
 hold off
 close
@@ -334,6 +339,29 @@ print('-dpdf', strcat(figurepath, 'dstat_both.pdf'));
 hold off
 close
 
+figure(14)
+set(figure(14),'defaulttextinterpreter','latex');
+hold on
+%slp='';
+for j=1:jlim
+    %s=polyfit(domy(:,j),d(:,j),1);
+    %s=s(1)*100;
+    %plot(domy(:,j),d(:,j),'color',rand(1,3))
+    plot(linspace(1,n,n),(d(:,j)),'color',col(j,:))
+    plot(linspace(1,n,n),(dgiv(:,j)),'color','blue')
+    %slp = strcat(slp,'slope',num2str(j),'=',num2str(s),', ');
+end
+% xlabel(strcat('$y$, ',gin),'FontSize',14)
+xlabel('$income-class rank$','FontSize',14)
+ylabel('$d$','FontSize',14)
+%title(strcat('Dowry, $\alpha = ',num2str(al),', ',slp,'$'),'FontSize',14)
+%title(strcat('Dowry, $\alpha = ',num2str(al),'$'),'FontSize',14)
+title('Dowry vs Income-class rank','FontSize',14)
+legend('Received','Given','Location','southeast')
+print('-dpdf', strcat(figurepath, 'd_both.pdf'));
+hold off
+close
+
 close all
 %%
 %{
@@ -352,8 +380,8 @@ Y(:,1) = linspace(xin,xl,n); %Income classes
 Y(:,2) = pdf(Ydist,Y(:,1)); %No. of boys/girls in each income class
 Y(:,2) = 15055.5*(Y(:,2)/sum(Y(:,2)));
 %}
-figure(14)
-set(figure(14),'defaulttextinterpreter','latex');
+figure(15)
+set(figure(15),'defaulttextinterpreter','latex');
 hold on
 xlabel('$y$','FontSize',14)
 ylabel('Pr(Girl)','FontSize',14)
