@@ -55,6 +55,6 @@ temp5 = @(pars) est_all(castes,pars);
 problem = createOptimProblem('fmincon','x0',pguess,'objective',temp5,'lb',[3,0.2],'ub',[35,1]);
 ms = MultiStart();
 % ms = MultiStart('PlotFcns',@gsplotbestf,'UseParallel',true);
-[xmin,fmin,flag,outpt,allmins] = run(ms,problem,30)
+[xmin,fmin,flag,outpt,allmins] = run(ms,problem,20)
 %delete(gcp('nocreate'))
-save(strcat('./bs_results/result',num2str(sample_num),'.mat'));
+save(strcat('./bs_nw/result',num2str(sample_num),'.mat'));

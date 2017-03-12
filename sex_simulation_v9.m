@@ -31,7 +31,7 @@ for j=1:jlim
     X(:,2) = pop*(X(:,2)/sum(X(:,2)));
     %del(j)=delx;
     
-    [X, Hky_data, n] = getdata(28);
+    [X, Hky_data, n] = getdata(4);
     %X = equal_sized(X,nclass,pop);
     %n = nclass;
     %X = [X(:,1)*100 X(:,2)]
