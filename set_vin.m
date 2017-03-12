@@ -48,7 +48,7 @@ vyy(y,2) = log(Cy) + log(cy);
 
 exitflag = 0;
 
-while Y(y,2)>0
+while Y(y,2)>=0
     y = y+1;
     
     while (X(x,2)>0) % Going down to the next girl as long as boys are left
@@ -78,10 +78,10 @@ while Y(y,2)>0
         Hks(y,x) = Hk;
         bleft = X(x,2);
         
-        if (X(x,2) == Y(y,2))
-            disp('check')
-            pause;
-        end
+%         if (X(x,2) == Y(y,2))
+%             disp('check')
+%             pause;
+%         end
         
         if (X(x,2) > Y(y,2))
             dgiven(y,2) = dgiven(y,2) + (Y(y,2)/ngirls)*d;

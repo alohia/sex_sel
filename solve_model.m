@@ -34,8 +34,7 @@ while(1)
 %     vin = vxx(n,i-1);
 %     temp = @(vi) real(set_vin(n,H,al,vi,X,Y,i,vxx));
     temp = @(vi) set_vin(n,H,al,vi,X,Y,i,vxx);
-    %temp(v_low)
-    disp(strcat('i=',num2str(i)))
+    %disp(strcat('i=',num2str(i)))
     options = optimset('Display','off');
 %     ind = 1;
 %     for i2 = v_low:0.001:v_high
@@ -65,7 +64,7 @@ while(1)
         xend = xend-1;
     end
     i = i+1;
-    if (i>2 & (vxx(:,i-1) == vxx(:,i-2) | i > 35))
+    if (i>2 & (vxx(:,i-1) == vxx(:,i-2) | i > 25))
         break
     end
 end
