@@ -31,7 +31,7 @@ for j=1:jlim
     X(:,2) = pop*(X(:,2)/sum(X(:,2)));
     %del(j)=delx;
     
-    %[X, Hky_data, n] = getdata(23);
+    [X, Hky_data, n] = getdata(28);
     %X = equal_sized(X,nclass,pop);
     %n = nclass;
     %X = [X(:,1)*100 X(:,2)]
@@ -55,9 +55,11 @@ for j=1:jlim
     a = 10.1179; %upper limit for H distribution
     al = 0.6043; %exogenous alpha - husband's share
     
-    a = 15 + 0*8*l;
-    al = 0.7 - 0*l;
+    a = 12 + 0*8*l;
+    al = 0.6 + 0.2*l;
     
+    a = 12.9751;
+    al = 0.6128;
     params = [a,al];
 
     
@@ -364,7 +366,7 @@ close
 
 close all
 %%
-%{
+
 
 %{
 xin = 7.45 + 0.2;
@@ -383,10 +385,10 @@ Y(:,2) = 15055.5*(Y(:,2)/sum(Y(:,2)));
 figure(15)
 set(figure(15),'defaulttextinterpreter','latex');
 hold on
-xlabel('$y$','FontSize',14)
-ylabel('Pr(Girl)','FontSize',14)
+xlabel('Income-class rank','FontSize',14)
+ylabel('Child Sex Ratio','FontSize',14)
 title(strcat('Counterfactual Simulations, $\alpha = ',num2str(al),'$'),'FontSize',14)
-plot(linspace(1,n,n),PG(:,j))
+plot(linspace(1,n,n),100*csr(:,j))
 %plot(domy(:,j),PG(:,j))
 
 [X, Hky_data, n] = getdata(28);
@@ -397,50 +399,42 @@ plot(linspace(1,n,n),PG(:,j))
 Y = X;
 j=1;
 tr = 0.2 * ((X(1,1)+X(2,1))/2);
-% [Hky,ks,CYy,cYy,CXx,cXx,ky,vyy,vxx,i,dy,S] = solve_model(X,Y,params);
-% PG(:,j) = (1-Hky)./2; %with substitution
-% H(:,j) = Hky;
-% x(:,j) = X(:,2);
-% domx(:,j) = X(:,1);
-% domy(:,j) = Y(:,1);
-% d(:,j) = dy(:,2);
-% var(j) = vr;
-% plot(linspace(1,n),PG(:,j),'color','r')
-% plot(domy(:,j),PG(:,j),'color','r')
 [Hky,ks,CYy,cYy,CXx,cXx,ky,vyy,vxx,i,dy,S] = solve_model_top(X,Y,params,tr);
 PG(:,j) = (1-Hky)./2; %with substitution
+csr(:,j) = (1+Hky)./(1-Hky);
 H(:,j) = Hky;
 x(:,j) = X(:,2);
 domx(:,j) = X(:,1);
 domy(:,j) = Y(:,1);
 d(:,j) = dy(:,2);
 %var(j) = vr;
-plot(linspace(1,n,n),PG(:,j),'color','g')
+plot(linspace(1,n,n),100*csr(:,j),'color','g')
 %plot(domy(:,j),PG(:,j),'color','g')
 
 tr = tr/4;
 [Hky,ks,CYy,cYy,CXx,cXx,ky,vyy,vxx,i,dy,S] = solve_model_all(X,Y,params,tr);
 PG(:,j) = (1-Hky)./2; %with substitution
+csr(:,j) = (1+Hky)./(1-Hky);
 H(:,j) = Hky;
 x(:,j) = X(:,2);
 domx(:,j) = X(:,1);
 domy(:,j) = Y(:,1);
 d(:,j) = dy(:,2);
 %var(j) = vr;
-plot(linspace(1,n,n),PG(:,j),'color','r')
+plot(linspace(1,n,n),100*csr(:,j),'color','r')
 
 [Hky,ks,CYy,cYy,CXx,cXx,ky,vyy,vxx,i,dy,S] = solve_model_girls(X,Y,params,tr);
 PG(:,j) = (1-Hky)./2; %with substitution
+csr(:,j) = (1+Hky)./(1-Hky);
 H(:,j) = Hky;
 x(:,j) = X(:,2);
 domx(:,j) = X(:,1);
 domy(:,j) = Y(:,1);
 d(:,j) = dy(:,2);
 %var(j) = vr;
-plot(linspace(1,n,n),PG(:,j),'color','black')
+plot(linspace(1,n,n),100*csr(:,j),'color','black')
 
-legend('Benchmark','Tr to fathers of poor girls','Tr to fathers of all girls','Tr to all girls','Location','northeast')
+legend('Benchmark','Tr to fathers of poor girls','Tr to fathers of all girls','Tr to all girls','Location','southeast')
 print('-dpdf', strcat(figurepath, 'counter1.pdf'));
 hold off
 close all
-%}
