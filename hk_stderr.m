@@ -15,3 +15,6 @@ end
 
 pred_csr = mean(100*((1+Hks)./(1-Hks)))';
 se_csr = std(100*((1+Hks)./(1-Hks)))';
+
+pred_PG = mean((1-Hks)./2)'; %with substitution
+se_PG = std((1-Hks)./2)';
