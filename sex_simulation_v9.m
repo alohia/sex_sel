@@ -31,7 +31,7 @@ for j=1:jlim
     X(:,2) = pop*(X(:,2)/sum(X(:,2)));
     %del(j)=delx;
     
-    [X, Hky_data, n] = getdata(4);
+    [X, Hky_data, n] = getdata(28);
     %X = equal_sized(X,nclass,pop);
     %n = nclass;
     %X = [X(:,1)*100 X(:,2)]
@@ -56,7 +56,7 @@ for j=1:jlim
     al = 0.6043; %exogenous alpha - husband's share
     
     a = 12 + 0*8*l;
-    al = 0.6 + 0.2*l;
+    al = 0.8 - 0.2*l;
     
     a = 12.9751;
     al = 0.6128;
@@ -186,12 +186,12 @@ spy(kvals(:,:,1),'r')
 grid on
 set(gca,'YDir','normal', 'GridLineStyle', ':')
 refline(1,0)
-xlabel('$x$','FontSize',14)
-ylabel('$y$','FontSize',14)
+xlabel('male wealth class','FontSize',14)
+ylabel('female wealth class','FontSize',14)
 %set(gca,'XTickLabel',labmy)
 %set(gca,'YTickLabel',labmy)
-legend(lvar,'Location','southeast')
-title('Matching','FontSize',14)
+%legend(lvar,'Location','southeast')
+%title('Matching','FontSize',14)
 print('-dpdf', strcat(figurepath, 'Match.pdf'));
 close
 
@@ -247,8 +247,8 @@ close
 figure(10)
 j=1;
 set(figure(10),'defaulttextinterpreter','latex');
-title(strcat('Dowry/Wealth and Pr(Girl)',' | $\alpha=$',num2str(al)),'FontSize',14)
-xlabel('Income-class rank','FontSize',14)
+%title(strcat('Dowry/Wealth and Pr(Girl)',' | $\alpha=$',num2str(al)),'FontSize',14)
+xlabel('wealth class','FontSize',14)
 lvar2={};
 hold on
 for j=1:jlim
@@ -256,10 +256,10 @@ for j=1:jlim
     plot(linspace(1,n,n),d(:,j)./X(:,1))
     yyaxis left
     plot(linspace(1,n,n),PG(:,j))
-    lvar2{j} = strcat('a = ',num2str(as(j)));
+    lvar2{j} = strcat('\alpha = ',num2str(alph(j)));
 end
 yyaxis right
-ylabel('$d/x$','FontSize',14)
+ylabel('dowry/wealth','FontSize',14)
 yyaxis left
 ylabel('Pr(Girl)','FontSize',14)
 % set(get(ax(1),'Ylabel'),'String','$d$','FontSize',14)
@@ -331,11 +331,11 @@ for j=1:jlim
     %slp = strcat(slp,'slope',num2str(j),'=',num2str(s),', ');
 end
 % xlabel(strcat('$y$, ',gin),'FontSize',14)
-xlabel('$income-class rank$','FontSize',14)
-ylabel('Fraction','FontSize',14)
+xlabel('wealth class','FontSize',14)
+ylabel('dowry/wealth','FontSize',14)
 %title(strcat('Dowry, $\alpha = ',num2str(al),', ',slp,'$'),'FontSize',14)
 %title(strcat('Dowry, $\alpha = ',num2str(al),'$'),'FontSize',14)
-title('Dowry/Income vs Income-class rank','FontSize',14)
+%title('Dowry/Income vs Income-class rank','FontSize',14)
 legend('Received','Given','Location','southeast')
 print('-dpdf', strcat(figurepath, 'dstat_both.pdf'));
 hold off
@@ -385,10 +385,10 @@ Y(:,2) = 15055.5*(Y(:,2)/sum(Y(:,2)));
 figure(15)
 set(figure(15),'defaulttextinterpreter','latex');
 hold on
-xlabel('Income-class rank','FontSize',14)
-ylabel('Child Sex Ratio','FontSize',14)
-title(strcat('Counterfactual Simulations, $\alpha = ',num2str(al),'$'),'FontSize',14)
-plot(linspace(1,n,n),100*csr(:,j))
+xlabel('wealth class','FontSize',14)
+ylabel('child sex ratio','FontSize',14)
+%title(strcat('Counterfactual Simulations, $\alpha = ',num2str(al),'$'),'FontSize',14)
+plot(linspace(1,n,n),100*csr(:,j),'color','k')
 %plot(domy(:,j),PG(:,j))
 
 [X, Hky_data, n] = getdata(28);
@@ -408,7 +408,7 @@ domx(:,j) = X(:,1);
 domy(:,j) = Y(:,1);
 d(:,j) = dy(:,2);
 %var(j) = vr;
-plot(linspace(1,n,n),100*csr(:,j),'color','g')
+plot(linspace(1,n,n),100*csr(:,j),'color','r','LineStyle','--')
 %plot(domy(:,j),PG(:,j),'color','g')
 
 tr = tr/4;
@@ -432,9 +432,9 @@ domx(:,j) = X(:,1);
 domy(:,j) = Y(:,1);
 d(:,j) = dy(:,2);
 %var(j) = vr;
-plot(linspace(1,n,n),100*csr(:,j),'color','black')
+plot(linspace(1,n,n),100*csr(:,j),'color','g')
 
-legend('Benchmark','Tr to fathers of poor girls','Tr to fathers of all girls','Tr to all girls','Location','southeast')
+legend('Benchmark','Transfer to fathers of poor girls','Transfer to fathers of all girls','Transfer to all girls','Location','southeast')
 print('-dpdf', strcat(figurepath, 'counter1.pdf'));
 hold off
 close all
