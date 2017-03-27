@@ -56,7 +56,7 @@ for j=1:jlim
     al = 0.6043; %exogenous alpha - husband's share
     
     a = 12 + 0*8*l;
-    al = 0.8 - 0.2*l;
+    al = 0.6 - 0*0.2*l;
     
     a = 12.9751;
     al = 0.6128;
@@ -438,3 +438,86 @@ legend('Benchmark','Transfer to fathers of poor girls','Transfer to fathers of a
 print('-dpdf', strcat(figurepath, 'counter1.pdf'));
 hold off
 close all
+%%
+figure(16)
+set(figure(16),'defaulttextinterpreter','latex');
+hold on
+xlabel('wealth class','FontSize',14)
+ylabel('child sex ratio','FontSize',14)
+%title(strcat('Counterfactual Simulations, $\alpha = ',num2str(al),'$'),'FontSize',14)
+
+[X, Hky_data, n] = getdata(28);
+Y = X;
+j = 1;
+[Hky,ks,CYy,cYy,CXx,cXx,ky,phi,vxx,i,dy,S,dgiven] = solve_model(X,Y,params);
+%PG(:,j) = (1-Hky)./(2-Hky); %without substitution
+PG(:,j) = (1-Hky)./2; %with substitution
+csr(:,j) = (1+Hky)./(1-Hky);
+plot(linspace(1,n,n),100*csr(:,j),'color','b')
+lvar={};
+lvar{1} = 'Benchmark';
+%plot(domy(:,j),PG(:,j))
+
+[X, Hky_data, n] = getdata(28);
+Y = X;
+j = 1;
+theta = 0.9;
+[Hky,ks,CYy,cYy,CXx,cXx,ky,vyy,vxx,i,dy,S,dgiven] = solve_model_dtax(X,Y,params,theta);
+PG(:,j) = (1-Hky)./2; %with substitution
+csr(:,j) = (1+Hky)./(1-Hky);
+H(:,j) = Hky;
+x(:,j) = X(:,2);
+domx(:,j) = X(:,1);
+domy(:,j) = Y(:,1);
+d(:,j) = dy(:,2);
+dgiv(:,j) = dgiven(:,2);
+dgiv(dgiv(:,j)==0,j) = NaN;
+%var(j) = vr;
+plot(linspace(1,n,n),100*csr(:,j),'color','r','LineStyle','--')
+lvar{2}=strcat('\theta=',num2str(theta));
+%plot(domy(:,j),PG(:,j),'color','g')
+
+
+[X, Hky_data, n] = getdata(28);
+Y = X;
+j = 1;
+theta = 1.1;
+[Hky,ks,CYy,cYy,CXx,cXx,ky,vyy,vxx,i,dy,S] = solve_model_dtax(X,Y,params,theta);
+PG(:,j) = (1-Hky)./2; %with substitution
+csr(:,j) = (1+Hky)./(1-Hky);
+H(:,j) = Hky;
+x(:,j) = X(:,2);
+domx(:,j) = X(:,1);
+domy(:,j) = Y(:,1);
+d(:,j) = dy(:,2);
+%var(j) = vr;
+plot(linspace(1,n,n),100*csr(:,j),'color','r')
+lvar{3} = strcat('\theta=',num2str(theta));
+
+legend(lvar,'Location','southeast')
+print('-dpdf', strcat(figurepath, 'counter_tax.pdf'));
+hold off
+close all
+
+figure(17)
+set(figure(17),'defaulttextinterpreter','latex');
+hold on
+%slp='';
+for j=1:jlim
+    %s=polyfit(domy(:,j),d(:,j),1);
+    %s=s(1)*100;
+    %plot(domy(:,j),d(:,j),'color',rand(1,3))
+    plot(linspace(1,n,n),(d(:,j)./X(:,1)),'color',col(j,:))
+    plot(linspace(1,n,n),(dgiv(:,j)./Y(:,1)),'color','blue')
+    %slp = strcat(slp,'slope',num2str(j),'=',num2str(s),', ');
+end
+% xlabel(strcat('$y$, ',gin),'FontSize',14)
+xlabel('$income-class rank$','FontSize',14)
+ylabel('$d/x$','FontSize',14)
+%title(strcat('Dowry, $\alpha = ',num2str(al),', ',slp,'$'),'FontSize',14)
+%title(strcat('Dowry, $\alpha = ',num2str(al),'$'),'FontSize',14)
+title('Dowry/Income vs Income-class rank','FontSize',14)
+legend(lvar,'Location','southeast')
+%print('-dpdf', strcat(figurepath, 'dstat.pdf'));
+hold off
+close
