@@ -434,11 +434,14 @@ d(:,j) = dy(:,2);
 %var(j) = vr;
 plot(linspace(1,n,n),100*csr(:,j),'color','g')
 
-legend('Benchmark','Transfer to fathers of poor girls','Transfer to fathers of all girls','Transfer to all girls','Location','southeast')
+legend('Benchmark','Transfer to parents of poor girls','Transfer to parents of all girls','Transfer to all girls','Location','southeast')
 print('-dpdf', strcat(figurepath, 'counter1.pdf'));
 hold off
 close all
 %%
+
+[X, Hky_data, n] = getdata(28);
+
 figure(16)
 set(figure(16),'defaulttextinterpreter','latex');
 hold on
@@ -446,25 +449,32 @@ xlabel('wealth class','FontSize',14)
 ylabel('child sex ratio','FontSize',14)
 %title(strcat('Counterfactual Simulations, $\alpha = ',num2str(al),'$'),'FontSize',14)
 
-[X, Hky_data, n] = getdata(28);
-Y = X;
-j = 1;
-[Hky,ks,CYy,cYy,CXx,cXx,ky,phi,vxx,i,dy,S,dgiven] = solve_model(X,Y,params);
-%PG(:,j) = (1-Hky)./(2-Hky); %without substitution
-PG(:,j) = (1-Hky)./2; %with substitution
-csr(:,j) = (1+Hky)./(1-Hky);
+castes = [1 .0984789; 4 0.0090223; 5 0.018784; 7 0.0151011; 10 .0221519; 14 .0589121; 17 .0112403; 23 .0183048; 28 .4044578; 33 .0585972; 38 .2693966; 44 .0155529];
+csr = zeros(length(X),1);
+for i = 1:length(castes)
+    [X, Hky_data, n] = getdata(castes(i));
+    Y = X;
+    j = 1;
+    [Hky,ks,CYy,cYy,CXx,cXx,ky,phi,vxx,~,dy,S,dgiven] = solve_model(X,Y,params);
+    %PG(:,j) = (1-Hky)./(2-Hky); %without substitution
+    PG(:,j) = (1-Hky)./2; %with substitution
+    csr(:,j) = csr(:,j) + castes(i,2).*((1+Hky)./(1-Hky));
+end
 plot(linspace(1,n,n),100*csr(:,j),'color','b')
 lvar={};
 lvar{1} = 'Benchmark';
 %plot(domy(:,j),PG(:,j))
 
-[X, Hky_data, n] = getdata(28);
-Y = X;
-j = 1;
+csr = zeros(length(X),1);
 theta = 0.9;
-[Hky,ks,CYy,cYy,CXx,cXx,ky,vyy,vxx,i,dy,S,dgiven] = solve_model_dtax(X,Y,params,theta);
-PG(:,j) = (1-Hky)./2; %with substitution
-csr(:,j) = (1+Hky)./(1-Hky);
+for i = 1:length(castes)
+    [X, Hky_data, n] = getdata(castes(i));
+    Y = X;
+    j = 1;
+    [Hky,ks,CYy,cYy,CXx,cXx,ky,vyy,vxx,~,dy,S,dgiven] = solve_model_dtax(X,Y,params,theta);
+    PG(:,j) = (1-Hky)./2; %with substitution
+    csr(:,j) = csr(:,j) + castes(i,2).*((1+Hky)./(1-Hky));
+end
 H(:,j) = Hky;
 x(:,j) = X(:,2);
 domx(:,j) = X(:,1);

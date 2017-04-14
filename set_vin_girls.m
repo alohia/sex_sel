@@ -92,7 +92,7 @@ while Y(y,2)>0
         x = x-1;
         if (x ~= n)
             v_high = log((X(x,1)+Y(y,1))/2) + log(al*((X(x,1)+Y(y,1))/2));
-            v_low = log(X(x,1)/2) + log(al*(X(x,1)/2));
+            v_low = log(X(x,1)/2) + log((X(x,1)/2));
             temp = @(v) my_phi_girls(v,al,vyy(y,2),X(x,1),Y(y,1),tr);
             opts1=  optimset('display','off');
 %             vnew = lsqnonlin(temp,vxx(x+1,i),v_low,v_high,opts1);

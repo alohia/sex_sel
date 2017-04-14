@@ -107,8 +107,12 @@ while Y(y,2)>=0
         xchng = 1;
         x = x-1;
         if (x ~= n)
-            v_high = log(((2*X(x,1))+(3*theta*Y(y,1)))/4) + log(al*(((2*X(x,1))+(theta*Y(y,1)))/4));
-            v_low = log(X(x,1)/2) + log((X(x,1)/2));
+            if (theta < 1)
+                v_high = log(((X(x,1))+(theta*Y(y,1)))/2) + log(al*(((X(x,1))+(theta*Y(y,1)))/2));
+            else
+                v_high = log(((2*X(x,1))+(theta*Y(y,1)))/4) + log(al*(((2*X(x,1))+(theta*Y(y,1)))/4));
+            end
+            v_low = log((1/4)*X(x,1)*X(x,1));
             temp = @(v) my_phi_dtax(v,al,vyy(y,2),X(x,1),Y(y,1),theta);
             opts1=  optimset('display','off');
 %             vnew = lsqnonlin(temp,vxx(x+1,i),v_low,v_high,opts1);

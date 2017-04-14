@@ -20,7 +20,7 @@ cx = al*t;
 vin = log(Cx) + log(cx);
 
 v_high = log(al*X(x,1)*X(x,1));
-v_low = log((al/4)*X(x,1)*X(x,1));
+v_low = log((1/4)*X(x,1)*X(x,1));
 
 % b=n;
 % vguess = zeros(n,1);
