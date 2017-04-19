@@ -43,7 +43,9 @@ CYy(y,xi) = Cy;
 cYy(y,xi) = cy;
 vyy(y,2) = log(Cy) + log(cy);
 
-while Y(y,2)>0
+exitflag = 0;
+
+while Y(y,2)>=0
     y = y+1;
         
     while (X(x,2)>0) % Going down to the next girl as long as boys are left
@@ -96,13 +98,22 @@ while Y(y,2)>0
         if (x ~= n)
             v_high = log((X(x,1)+Y(y,1))/2) + log(al*((X(x,1)+Y(y,1))/2));
             v_low = log(X(x,1)/2) + log((X(x,1)/2));
-            temp = @(v) my_phi(v,al,vyy(y,2),X(x,1),(Y(y,1)+tr));
+            temp = @(v) real(my_phi(v,al,vyy(y,2),X(x,1),(Y(y,1)+tr)));
             opts1=  optimset('display','off');
+%             disp('temp v_low in setvin')
+%             temp(v_low)
+%             disp('temp v_high in setvin')
+%             temp(v_high)
+%             if (temp(v_high-0.0001)*temp(v_low+0.0001) > 0)
+%                 exitflag = 1;
+%                 break
+%             end
 %             vnew = lsqnonlin(temp,vxx(x+1,i),v_low,v_high,opts1);
 %             vdom = v_low:0.001:v_high;
 %             vals = temp(vdom);
 %             plot(vdom,vals)
             vnew = fsolve(temp,vxx(x+1,i),opts1);
+            %vnew = fzero(temp,[v_low+0.0001,v_high-0.0001],opts1);
 %             syms v_val;
 %             phi_eqn = vyy(y,2) == log(Y(y,1) - 2*(my_psi(v_val,al)) + X(x,1)) + log((1-al)*(my_psi(v_val,al)));
 %             vnew = vpasolve(phi_eqn,v_val)
@@ -127,5 +138,9 @@ while Y(y,2)>0
         end
     end
 end
+% if exitflag == 1
+%     diff = -1000;
+%     return 
+% end
 diff = vend - S(xend);
 end

@@ -19,7 +19,7 @@ Cx = X(x,1) + d - t;
 cx = al*t;
 vin = log(Cx) + log(cx);
 
-v_high = log(al*X(x,1)*X(x,1));
+v_high = log(al*X(x,1)*X(x,1))+1;
 v_low = log((1/4)*X(x,1)*X(x,1));
 
 % b=n;
@@ -36,10 +36,10 @@ vxx(n,i) = vin;
 
 while(1)
     vin = vxx(n,i-1);
-    temp = @(vi) real(set_vin_top(n,H,al,vi,X,Y,i,vxx,tr));
     disp(strcat('i=',num2str(i)))
+    temp = @(vi) real(set_vin_top(n,H,al,vi,X,Y,i,vxx,tr));
     options = optimset('Display','off');
-    [vinit,fval] = fzero(temp,vin,options);
+    [vinit,fval] = fzero(temp,vin,options);    
     if (fval > 10^-8)
         disp('boundary condition not met')
         disp(fval)

@@ -18,9 +18,9 @@ for j=1:jlim
     %vr = 0.27;
     mu = log(m) - (0.5*log((vr/(m*m))+1));
     sig = sqrt(log((vr/(m*m))+1));
-    Xdist = makedist('Normal','mu',m,'sigma',vr);
+    %Xdist = makedist('Normal','mu',m,'sigma',vr);
     %Xdist = makedist('Lognormal','mu',mu,'sigma',sig);
-    %Xdist = makedist('Uniform','lower',xin,'upper',xl);
+    Xdist = makedist('Uniform','lower',xin,'upper',xl);
     X(:,1) = linspace(xin,xl,n); %Income classes
     X(:,2) = pdf(Xdist,X(:,1));
     %cdf_dom = cdf(Xdist,xl)-cdf(Xdist,xin);
@@ -31,7 +31,7 @@ for j=1:jlim
     X(:,2) = pop*(X(:,2)/sum(X(:,2)));
     %del(j)=delx;
     
-    [X, Hky_data, n] = getdata(28);
+    %[X, Hky_data, n] = getdata(28);
     %X = equal_sized(X,nclass,pop);
     %n = nclass;
     %X = [X(:,1)*100 X(:,2)]
@@ -58,8 +58,8 @@ for j=1:jlim
     a = 12 + 0*8*l;
     al = 0.6 - 0*0.2*l;
     
-    a = 12.9751;
-    al = 0.6128;
+    %a = 12.9751;
+    %al = 0.6128;
     params = [a,al];
 
     
@@ -180,7 +180,12 @@ close
 figure(6)
 set(figure(6),'defaulttextinterpreter','latex');
 hold on
-spy(kvals(:,:,1),'r')
+kvl = (kvals(:,:,1)>0)';
+[kvlx, kvly] = find(kvl);
+plot(kvlx,kvly,'.-r','LineWidth',0.5,'MarkerSize',2)
+xlim([0 n])
+ylim([0 n])
+%spy(kvals(:,:,1),'r',7)
 %spy(kvals(:,:,2),'g')
 %spy(kvals(:,:,3),'b')
 grid on
@@ -364,6 +369,34 @@ print('-dpdf', strcat(figurepath, 'd_both.pdf'));
 hold off
 close
 
+figure(15)
+j=1;
+set(figure(15),'defaulttextinterpreter','latex');
+%title(strcat('Dowry/Wealth and Pr(Girl)',' | $\alpha=$',num2str(al)),'FontSize',14)
+xlabel('wealth class','FontSize',14)
+hold on
+for j=1:jlim
+    yyaxis left
+    p1 = plot(linspace(1,n,n),PG(:,j));
+    yyaxis right
+    p2 = plot(linspace(1,n,n),(d(:,j)./X(:,1)));
+    p3 = plot(linspace(1,n,n),(dgiv(:,j)./Y(:,1)));
+end
+yyaxis left
+ylabel('Pr(Girl)','FontSize',14)
+yyaxis right
+ylabel('dowry/wealth','FontSize',14)
+% set(get(ax(1),'Ylabel'),'String','$d$','FontSize',14)
+% set(get(ax(2),'Ylabel'),'String','Pr(Girl)','FontSize',14)
+% ylabel(gca(1),'$d$','FontSize',14)
+% ylabel(gca(2),'Pr(Girl)','FontSize',14)
+legend([p2 p3],{'Received','Given'},'Location','southwest')
+legend('boxoff')
+print('-dpdf', strcat(figurepath, 'dstat+Pr.pdf'));
+hold off
+close
+
+
 close all
 %%
 
@@ -382,26 +415,46 @@ Y(:,1) = linspace(xin,xl,n); %Income classes
 Y(:,2) = pdf(Ydist,Y(:,1)); %No. of boys/girls in each income class
 Y(:,2) = 15055.5*(Y(:,2)/sum(Y(:,2)));
 %}
-figure(15)
-set(figure(15),'defaulttextinterpreter','latex');
+
+castes = [1 .0984789; 4 0.0090223; 5 0.018784; 7 0.0151011; 10 .0221519; 14 .0589121; 17 .0112403; 23 .0183048; 28 .4044578; 33 .0585972; 38 .2693966; 44 .0155529];
+[X, Hky_data, n] = getdata(28);
+
+figure(16)
+set(figure(16),'defaulttextinterpreter','latex');
 hold on
 xlabel('wealth class','FontSize',14)
 ylabel('child sex ratio','FontSize',14)
 %title(strcat('Counterfactual Simulations, $\alpha = ',num2str(al),'$'),'FontSize',14)
+csr = zeros(length(X),1);
+for i = 1:length(castes)
+    [X, Hky_data, n] = getdata(castes(i));
+    Y = X;
+    j = 1;
+    [Hky,ks,CYy,cYy,CXx,cXx,ky,phi,vxx,~,dy,S,dgiven] = solve_model(X,Y,params);
+    %PG(:,j) = (1-Hky)./(2-Hky); %without substitution
+    PG(:,j) = (1-Hky)./2; %with substitution
+    csr(:,j) = csr(:,j) + castes(i,2).*((1+Hky)./(1-Hky));
+end
 plot(linspace(1,n,n),100*csr(:,j),'color','k')
 %plot(domy(:,j),PG(:,j))
 
-[X, Hky_data, n] = getdata(28);
+
+%[X, Hky_data, n] = getdata(28);
 %X = equal_sized(X,nclass,pop);
 %n = nclass;
 %X = [X(:,1)*100 X(:,2)]
 %X(:,1) = X(:,1)*10;
-Y = X;
-j=1;
-tr = 0.2 * ((X(1,1)+X(2,1))/2);
-[Hky,ks,CYy,cYy,CXx,cXx,ky,vyy,vxx,i,dy,S] = solve_model_top(X,Y,params,tr);
-PG(:,j) = (1-Hky)./2; %with substitution
-csr(:,j) = (1+Hky)./(1-Hky);
+csr = zeros(length(X),1);
+for i = 1:length(castes)
+    [X, Hky_data, n] = getdata(castes(i));
+    Y = X;
+    j = 1;
+    tr = 0.2 * ((X(1,1)+X(2,1))/2);
+    [Hky,ks,CYy,cYy,CXx,cXx,ky,vyy,vxx,~,dy,S] = solve_model_top(X,Y,params,tr);
+    PG(:,j) = (1-Hky)./2; %with substitution
+    csr(:,j) = csr(:,j) + castes(i,2).*((1+Hky)./(1-Hky));
+    csr
+end
 H(:,j) = Hky;
 x(:,j) = X(:,2);
 domx(:,j) = X(:,1);
@@ -411,10 +464,18 @@ d(:,j) = dy(:,2);
 plot(linspace(1,n,n),100*csr(:,j),'color','r','LineStyle','--')
 %plot(domy(:,j),PG(:,j),'color','g')
 
-tr = tr/4;
-[Hky,ks,CYy,cYy,CXx,cXx,ky,vyy,vxx,i,dy,S] = solve_model_all(X,Y,params,tr);
-PG(:,j) = (1-Hky)./2; %with substitution
-csr(:,j) = (1+Hky)./(1-Hky);
+
+csr = zeros(length(X),1);
+for i = 1:length(castes)
+    [X, Hky_data, n] = getdata(castes(i));
+    Y = X;
+    j = 1;
+    tr = (0.2 * ((X(1,1)+X(2,1))/2))/4;
+    [Hky,ks,CYy,cYy,CXx,cXx,ky,vyy,vxx,~,dy,S] = solve_model_all(X,Y,params,tr);
+    PG(:,j) = (1-Hky)./2; %with substitution
+    csr(:,j) = csr(:,j) + castes(i,2).*((1+Hky)./(1-Hky));
+    csr
+end
 H(:,j) = Hky;
 x(:,j) = X(:,2);
 domx(:,j) = X(:,1);
@@ -423,9 +484,17 @@ d(:,j) = dy(:,2);
 %var(j) = vr;
 plot(linspace(1,n,n),100*csr(:,j),'color','r')
 
-[Hky,ks,CYy,cYy,CXx,cXx,ky,vyy,vxx,i,dy,S] = solve_model_girls(X,Y,params,tr);
-PG(:,j) = (1-Hky)./2; %with substitution
-csr(:,j) = (1+Hky)./(1-Hky);
+csr = zeros(length(X),1);
+for i = 1:length(castes)
+    [X, Hky_data, n] = getdata(castes(i));
+    Y = X;
+    j = 1;
+    tr = (0.2 * ((X(1,1)+X(2,1))/2))/4;
+    [Hky,ks,CYy,cYy,CXx,cXx,ky,vyy,vxx,~,dy,S] = solve_model_girls(X,Y,params,tr);
+    PG(:,j) = (1-Hky)./2; %with substitution
+    csr(:,j) = csr(:,j) + castes(i,2).*((1+Hky)./(1-Hky));
+    csr
+end
 H(:,j) = Hky;
 x(:,j) = X(:,2);
 domx(:,j) = X(:,1);
@@ -442,14 +511,13 @@ close all
 
 [X, Hky_data, n] = getdata(28);
 
-figure(16)
-set(figure(16),'defaulttextinterpreter','latex');
+figure(17)
+set(figure(17),'defaulttextinterpreter','latex');
 hold on
 xlabel('wealth class','FontSize',14)
 ylabel('child sex ratio','FontSize',14)
 %title(strcat('Counterfactual Simulations, $\alpha = ',num2str(al),'$'),'FontSize',14)
 
-castes = [1 .0984789; 4 0.0090223; 5 0.018784; 7 0.0151011; 10 .0221519; 14 .0589121; 17 .0112403; 23 .0183048; 28 .4044578; 33 .0585972; 38 .2693966; 44 .0155529];
 csr = zeros(length(X),1);
 for i = 1:length(castes)
     [X, Hky_data, n] = getdata(castes(i));
@@ -509,8 +577,8 @@ print('-dpdf', strcat(figurepath, 'counter_tax.pdf'));
 hold off
 close all
 
-figure(17)
-set(figure(17),'defaulttextinterpreter','latex');
+figure(18)
+set(figure(18),'defaulttextinterpreter','latex');
 hold on
 %slp='';
 for j=1:jlim
