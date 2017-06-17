@@ -435,7 +435,7 @@ for i = 1:length(castes)
     PG(:,j) = (1-Hky)./2; %with substitution
     csr(:,j) = csr(:,j) + castes(i,2).*((1+Hky)./(1-Hky));
 end
-plot(linspace(1,n,n),100*csr(:,j),'color','k')
+plot(linspace(1,n,n),100*csr(:,j),'color','b')
 %plot(domy(:,j),PG(:,j))
 
 
@@ -461,7 +461,7 @@ domx(:,j) = X(:,1);
 domy(:,j) = Y(:,1);
 d(:,j) = dy(:,2);
 %var(j) = vr;
-plot(linspace(1,n,n),100*csr(:,j),'color','r','LineStyle','--')
+plot(linspace(1,n,n),100*csr(:,j),'color','r')
 %plot(domy(:,j),PG(:,j),'color','g')
 
 
@@ -482,7 +482,7 @@ domx(:,j) = X(:,1);
 domy(:,j) = Y(:,1);
 d(:,j) = dy(:,2);
 %var(j) = vr;
-plot(linspace(1,n,n),100*csr(:,j),'color','r')
+plot(linspace(1,n,n),100*csr(:,j),'color','r','LineStyle','--')
 
 csr = zeros(length(X),1);
 for i = 1:length(castes)
@@ -501,7 +501,7 @@ domx(:,j) = X(:,1);
 domy(:,j) = Y(:,1);
 d(:,j) = dy(:,2);
 %var(j) = vr;
-plot(linspace(1,n,n),100*csr(:,j),'color','g')
+plot(linspace(1,n,n),100*csr(:,j),'color',[0 .5 0])
 
 legend('Benchmark','Transfer to parents of poor girls','Transfer to parents of all girls','Transfer to all girls','Location','southeast')
 print('-dpdf', strcat(figurepath, 'counter1.pdf'));
