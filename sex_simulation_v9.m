@@ -435,6 +435,7 @@ for i = 1:length(castes)
     PG(:,j) = (1-Hky)./2; %with substitution
     csr(:,j) = csr(:,j) + castes(i,2).*((1+Hky)./(1-Hky));
 end
+%plot(linspace(1,n,n),100*csr(:,j),'color','b', 'LineWidth', 1)
 plot(linspace(1,n,n),100*csr(:,j),'color','b')
 %plot(domy(:,j),PG(:,j))
 
@@ -461,6 +462,7 @@ domx(:,j) = X(:,1);
 domy(:,j) = Y(:,1);
 d(:,j) = dy(:,2);
 %var(j) = vr;
+%plot(linspace(1,n,n),100*csr(:,j),'color','r', 'LineWidth', 1.5)
 plot(linspace(1,n,n),100*csr(:,j),'color','r')
 %plot(domy(:,j),PG(:,j),'color','g')
 
@@ -482,6 +484,7 @@ domx(:,j) = X(:,1);
 domy(:,j) = Y(:,1);
 d(:,j) = dy(:,2);
 %var(j) = vr;
+%plot(linspace(1,n,n),100*csr(:,j),'color','r','LineStyle','--', 'LineWidth', 1)
 plot(linspace(1,n,n),100*csr(:,j),'color','r','LineStyle','--')
 
 csr = zeros(length(X),1);
@@ -501,10 +504,14 @@ domx(:,j) = X(:,1);
 domy(:,j) = Y(:,1);
 d(:,j) = dy(:,2);
 %var(j) = vr;
-plot(linspace(1,n,n),100*csr(:,j),'color',[0 .5 0])
+%plot(linspace(1,n,n),100*csr(:,j),'color',[0 .5 0])
+%plot(linspace(1,n,n),100*csr(:,j),'color','k', 'LineStyle', '--', 'LineWidth', 1)
+plot(linspace(1,n,n),100*csr(:,j),'color','k', 'LineStyle', '--')
+%plot(linspace(1,n,n),100*csr(:,j),'color','k', 'LineWidth', 1.5)
+
 
 legend('Benchmark','Transfer to parents of poor girls','Transfer to parents of all girls','Transfer to all girls','Location','southeast')
-print('-dpdf', strcat(figurepath, 'counter1.pdf'));
+print('-dpdf', strcat(figurepath, 'counter_black_normal.pdf'));
 hold off
 close all
 %%
@@ -528,7 +535,7 @@ for i = 1:length(castes)
     PG(:,j) = (1-Hky)./2; %with substitution
     csr(:,j) = csr(:,j) + castes(i,2).*((1+Hky)./(1-Hky));
 end
-plot(linspace(1,n,n),100*csr(:,j),'color','b')
+plot(linspace(1,n,n),100*csr(:,j),'color','b', 'LineWidth', 1.5)
 lvar={};
 lvar{1} = 'Benchmark';
 %plot(domy(:,j),PG(:,j))
@@ -551,7 +558,7 @@ d(:,j) = dy(:,2);
 dgiv(:,j) = dgiven(:,2);
 dgiv(dgiv(:,j)==0,j) = NaN;
 %var(j) = vr;
-plot(linspace(1,n,n),100*csr(:,j),'color','r','LineStyle','--')
+plot(linspace(1,n,n),100*csr(:,j),'color','r','LineStyle','--', 'LineWidth', 1.5)
 lvar{2}=strcat('\theta=',num2str(theta));
 %plot(domy(:,j),PG(:,j),'color','g')
 

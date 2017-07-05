@@ -1,4 +1,9 @@
-# Wealth, Marriage and Sex Selection
+---
+title: "Wealth, Marriage and Sex Selection"
+author: "Code Documentation"
+date: "June 2017"
+output: pdf_document
+---
 
 ## Summary
 

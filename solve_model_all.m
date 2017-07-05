@@ -1,6 +1,7 @@
 function [ Hky,ks,CYy,cYy,CXx,cXx,ky,vyy,vxx,i,dy,S ] = solve_model_all( X, Y, params, tr )
-%solve_model Function that takes X, Y and the parameters and returns H(k*)
+%solve_model_all Function that takes X, Y and the parameters and returns H(k*)
 %   Solving the model recursively starting from the topmost income class
+%   when giving transfer to all families with girls
 
 a = params(1);
 al = params(2);
